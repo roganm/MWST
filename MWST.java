@@ -1,7 +1,7 @@
 /* MWST.java
    CSC 226 - Spring 2017
    Assignment 5 - Template for a Minimum Weight Spanning Tree algorithm
-   
+
    The assignment is to implement the mwst() method below, using any of the algorithms
    studied in the course (Kruskal, Prim-Jarnik or Baruvka). The mwst() method computes
    a minimum weight spanning tree of the provided graph and returns the total weight
@@ -10,32 +10,32 @@
 
    This template includes some testing code to help verify the implementation.
    Input graphs can be provided with standard input or read from a file.
-   
+
    To provide test inputs with standard input, run the program with
 	java MWST
    To terminate the input, use Ctrl-D (which signals EOF).
-   
+
    To read test inputs from a file (e.g. graphs.txt), run the program with
     java MWST graphs.txt
-	
+
    The input format for both methods is the same. Input consists
    of a series of graphs in the following format:
-   
+
    <number of vertices>
 	<adjacency matrix row 1>
 	...
 	<adjacency matrix row n>
-	
+
    For example, a path on 3 vertices where one edge has weight 1 and the other
    edge has weight 2 would be represented by the following
-   
+
     3
 	0 1 0
 	1 0 2
 	0 2 0
-	
+
    An input file can contain an unlimited number of graphs; each will be processed separately.
-   
+
    B. Bird - 03/11/2012
 */
 
@@ -50,7 +50,7 @@ public class MWST{
 	/* mwst(G)
 		Given an adjacency matrix for graph G, return the total weight
 		of all edges in a minimum weight spanning tree.
-		
+
 		If G[i][j] == 0, there is no edge between vertex i and vertex j
 		If G[i][j] > 0, there is an edge between vertices i and j, and the
 		value of G[i][j] gives the weight of the edge.
@@ -65,12 +65,12 @@ public class MWST{
 		/* Find a minimum weight spanning tree by any method.
 			This implementation uses Kruskal's Algorithm
 		*/
-		
+
 		/* Initialize the Comparator and Priority Queue */
 		Comparator<Edge> comparator = new EdgeComparator();
 		PriorityQueue<Edge> queue =
 			new PriorityQueue<Edge>(numVerts, comparator);
-		
+
 		/* Create an Edge for each edge in the graph G
 			and add it to the PQ.
 		*/
@@ -90,7 +90,7 @@ public class MWST{
 	    	   remove that edge from the tree before proceeding,
 		   otherwise increment size and proceed. Stop when
 		   ( V - 1 ) edges have been added.
-		*/	
+		*/
 		while(!queue.isEmpty() && size < numVerts - 1){
 			Edge e = queue.remove();	// remove from PQ
 			tree[e.s][e.d] = e.w;		// add to tree
@@ -101,7 +101,7 @@ public class MWST{
 				size++;
 			}
 		}
-	
+
 		/* Add the weight of each edge in the minimum weight spanning tree
 		   to totalWeight, which will store the total weight of the tree.
 		*/
@@ -137,7 +137,7 @@ public class MWST{
 			s = new Scanner(System.in);
 			System.out.printf("Reading input values from stdin.\n");
 		}
-		
+
 		//Read graphs until EOF is encountered (or an error occurs)
 		while(true){
 			graphNum++;
@@ -164,7 +164,7 @@ public class MWST{
 			}
 			int totalWeight = mwst(G);
 			System.out.printf("Graph %d: Total weight is %d\n",graphNum,totalWeight);
-				
+
 		}
 	}
 
@@ -178,7 +178,7 @@ public class MWST{
 			if (G[v][i] > 0 && !visited[i])
 				isConnectedDFS(G,visited,i);
 	}
-	   
+
 	/* isConnected(G)
 	   Test whether G is connected.
 	   You may modify this, but nothing in this function will be marked.
@@ -209,29 +209,13 @@ public class MWST{
 
 	/* hasCycleDFS(T, visited, v)
 	   Used by the hasCycle function above.
-	*/
+  */
 	static void hasCycleDFS(int[][] T, int[] visited, int v){
 		visited[v]++;
 		for (int i = 0; i < T.length; i++)
 			if (T[v][i] > 0)
 				hasCycleDFS(T,visited,i);
-	}/*
-	static boolean hasCycle(int[][] T){
-		int[] visited = new int[T.length];
-		return hasCycleDFS(T,visited,0);
 	}
-
-
-	static boolean hasCycleDFS(int[][] T, int[] visited, int v){
-		visited[v]++;
-		for (int i = 0; i < T.length; i++)
-			if (T[v][i] > 0) {
-				if (visited[i] != 0) return true;
-				else return hasCycleDFS(T,visited,i);
-			}
-		return false;
-	}*/
-}
 
 /* Edge class for use by the Priority Queue.
 */
