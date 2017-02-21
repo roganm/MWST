@@ -42,7 +42,6 @@
 import java.util.Scanner;
 import java.util.Comparator;
 import java.util.PriorityQueue;
-import java.util.LinkedList;
 import java.io.File;
 
 public class MWST{
@@ -93,7 +92,7 @@ public class MWST{
 		int totalWeight = 0;
 		for(int i = 0; i < numVerts; i++){
 			for(int j = i; j < numVerts; j++){
-				if(tree[i][j] > 0) totalWeight += tree[i][j];
+				totalWeight += tree[i][j];
 			}
 		}
 		return totalWeight;
