@@ -42,6 +42,7 @@
 import java.util.Scanner;
 import java.util.Comparator;
 import java.util.PriorityQueue;
+import java.util.LinkedList;
 import java.io.File;
 
 public class MWST{
@@ -73,27 +74,31 @@ public class MWST{
 			}
 		}
 
-		while(!queue.isEmpty()){
+		int[][] tree = new int[numVerts][numVerts];
+		int size = 0;
+
+		while(!queue.isEmpty() && size < numVerts - 1){
 			Edge e = queue.remove();
-			System.out.println(e);
-			if(!createsCycle(spanningTree, e)) System.out.println("NO CYCLE CREATED");
+			tree[e.s][e.d] = e.w;
+			if(hasCycle(tree)){
+				tree[e.s][e.d] = 0;
+			} else {
+				size++;
+			}
 		}
-		
+	
 		/* Add the weight of each edge in the minimum weight spanning tree
 		   to totalWeight, which will store the total weight of the tree.
 		*/
 		int totalWeight = 0;
-		/* ... Your code here ... */
-		
+		for(int i = 0; i < numVerts; i++){
+			for(int j = i; j < numVerts; j++){
+				if(tree[i][j] > 0) totalWeight += tree[i][j];
+			}
+		}
 		return totalWeight;
-		
 	}
 
-	static boolean createsCycle(int A[][], Edge e){
-		if(A.length == 0) return false;
-		System.out.println(A.length);
-		return true;
-	}
 
 
 	public static void main(String[] args){
@@ -148,15 +153,15 @@ public class MWST{
 		}
 	}
 
-	/* isConnectedDFS(G, covered, v)
+	/* isConnectedDFS(G, visited, v)
 	   Used by the isConnected function below.
 	   You may modify this, but nothing in this function will be marked.
 	*/
-	static void isConnectedDFS(int[][] G, boolean[] covered, int v){
-		covered[v] = true;
+	static void isConnectedDFS(int[][] G, boolean[] visited, int v){
+		visited[v] = true;
 		for (int i = 0; i < G.length; i++)
-			if (G[v][i] > 0 && !covered[i])
-				isConnectedDFS(G,covered,i);
+			if (G[v][i] > 0 && !visited[i])
+				isConnectedDFS(G,visited,i);
 	}
 	   
 	/* isConnected(G)
@@ -164,14 +169,38 @@ public class MWST{
 	   You may modify this, but nothing in this function will be marked.
 	*/
 	static boolean isConnected(int[][] G){
-		boolean[] covered = new boolean[G.length];
-		for (int i = 0; i < covered.length; i++)
-			covered[i] = false;
-		isConnectedDFS(G,covered,0);
-		for (int i = 0; i < covered.length; i++)
-			if (!covered[i])
+		boolean[] visited = new boolean[G.length];
+		for (int i = 0; i < visited.length; i++)
+			visited[i] = false;
+		isConnectedDFS(G,visited,0);
+		for (int i = 0; i < visited.length; i++)
+			if (!visited[i])
 				return false;
 		return true;
+	}
+
+	/* hasCycle(T)
+	   Test whether T contains a cycle using DFS.
+	*/
+	static boolean hasCycle(int[][] T){
+		int[] visited = new int[T.length];
+		for (int i = 0; i < visited.length; i++)
+			visited[i] = 0;
+		hasCycleDFS(T,visited,0);
+		for (int i = 0; i < visited.length; i++)
+			if (visited[i] > 1)
+				return true;
+		return false;
+	}
+
+	/* hasCycleDFS(T, visited, v)
+	   Used by the hasCycle function above.
+	*/
+	static void hasCycleDFS(int[][] T, int[] visited, int v){
+		visited[v]++;
+		for (int i = 0; i < T.length; i++)
+			if (T[v][i] > 0)
+				hasCycleDFS(T,visited,i);
 	}
 
 }
@@ -179,16 +208,16 @@ public class MWST{
 class Edge {
 	public int 		s;	// source
 	public int 		d;	// destination
-	public double 	w;	// weight
+	public int	 	w;	// weight
 
-	Edge(int src, int dest, double wgt){
+	Edge(int src, int dest, int wgt){
 		s = src;
 		d = dest;
 		w = wgt;
 	}
 
     public String toString() {
-        return String.format("%d-%d   %.5f", s, d, w);
+        return String.format("%d-%d   %.5d", s, d, w);
     }
 }
 
@@ -198,12 +227,5 @@ class EdgeComparator implements Comparator<Edge> {
 		if (e1.w < e2.w) return -1;
 		if (e1.w > e2.w) return 1;
 		return 0;
-	}
-}
-
-class SpanningTree {
-
-	SpanningTree(int numVerts){
-		int[][] adjacencyMatrix = new int[numVerts-1][numVerts-1];
 	}
 }
